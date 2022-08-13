@@ -87,7 +87,7 @@ private slots:
     void on_remote_note_indicator(void*, const char*);
 private:
     static std::once_flag init_flag;
-    static void onGlobalInit(SettingDialog*, FilterDialog*, QLabel*);
+    static void onGlobalInit(SettingDialog*, FilterDialog*, QLabel*, const std::function<void()>&, const std::function<void()>&);
 
     void onLaunchClientComplete(const IpInfo&, const TimeqInfo&, const MediaqInfo&);
     void onLaunchServerComplete(const IpInfo&, const TimeqInfo&, const MediaqInfo&);

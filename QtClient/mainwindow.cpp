@@ -1,6 +1,8 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
+std::once_flag MainWindow::init_flag{};
+
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow), meeting_adapter(nullptr), media_control(nullptr), media_layout(nullptr), about_dialog(), set_dialog(), filter_dialog()
@@ -86,17 +88,18 @@ void MainWindow::showEvent(QShowEvent *event)
 {
     QWidget::showEvent(event);
 
-    disconnect(ui->camera_box, SIGNAL(currentIndexChanged(int)), this, SLOT(on_camera_box_currentIndexChanged(int)));
-    disconnect(ui->audio_box, SIGNAL(currentIndexChanged(int)), this, SLOT(on_audio_box_currentIndexChanged(int)));
-    disconnect(ui->audioinput_slider, SIGNAL(valueChanged(int)), this, SLOT(on_audioinput_slider_valueChanged(int)));
-    disconnect(ui->audiooutput_slider, SIGNAL(valueChanged(int)), this, SLOT(on_audiooutput_slider_valueChanged(int)));
-
-    onGlobalInit(&set_dialog, &filter_dialog, ui->label_global_status);
-
-    connect(ui->camera_box, SIGNAL(currentIndexChanged(int)), this, SLOT(on_camera_box_currentIndexChanged(int)));
-    connect(ui->audio_box, SIGNAL(currentIndexChanged(int)), this, SLOT(on_audio_box_currentIndexChanged(int)));
-    connect(ui->audioinput_slider, SIGNAL(valueChanged(int)), this, SLOT(on_audioinput_slider_valueChanged(int)));
-    connect(ui->audiooutput_slider, SIGNAL(valueChanged(int)), this, SLOT(on_audiooutput_slider_valueChanged(int)));
+    std::call_once(init_flag, MainWindow::onGlobalInit, &set_dialog, &filter_dialog, ui->label_global_status,
+                   [&]() -> void{
+                       disconnect(ui->camera_box, SIGNAL(currentIndexChanged(int)), this, SLOT(on_camera_box_currentIndexChanged(int)));
+                       disconnect(ui->audio_box, SIGNAL(currentIndexChanged(int)), this, SLOT(on_audio_box_currentIndexChanged(int)));
+                       disconnect(ui->audioinput_slider, SIGNAL(valueChanged(int)), this, SLOT(on_audioinput_slider_valueChanged(int)));
+                       disconnect(ui->audiooutput_slider, SIGNAL(valueChanged(int)), this, SLOT(on_audiooutput_slider_valueChanged(int)));
+                }, [&]() -> void {
+                       connect(ui->camera_box, SIGNAL(currentIndexChanged(int)), this, SLOT(on_camera_box_currentIndexChanged(int)));
+                       connect(ui->audio_box, SIGNAL(currentIndexChanged(int)), this, SLOT(on_audio_box_currentIndexChanged(int)));
+                       connect(ui->audioinput_slider, SIGNAL(valueChanged(int)), this, SLOT(on_audioinput_slider_valueChanged(int)));
+                       connect(ui->audiooutput_slider, SIGNAL(valueChanged(int)), this, SLOT(on_audiooutput_slider_valueChanged(int)));
+                   });
 }
 
 void MainWindow::hideEvent(QHideEvent *event)
@@ -304,11 +307,15 @@ void MainWindow::on_update_audio(const QList<QAudioDeviceInfo> &infos, QAudio::M
     }
 }
 
-void MainWindow::onGlobalInit(SettingDialog *set, FilterDialog *filter, QLabel *label)
+void MainWindow::onGlobalInit(SettingDialog *set, FilterDialog *filter, QLabel *label, const std::function<void()> &sfunc, const std::function<void()> &efunc)
 {
+    sfunc();
+
     set->onGlobalInit(label);
     filter->onGlobalInit(label);
     label->setText("启动完成!!!");
+
+    efunc();
 }
 
 void MainWindow::onLaunchClientComplete(const IpInfo &ip_info, const TimeqInfo &time_info, const MediaqInfo &media_info)
