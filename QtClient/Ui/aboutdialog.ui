@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>AboutDialog</class>
+ <widget class="QWidget" name="AboutDialog">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>615</width>
+    <height>441</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <widget class="QLabel" name="label_github">
+   <property name="geometry">
+    <rect>
+     <x>259</x>
+     <y>36</y>
+     <width>67</width>
+     <height>17</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>TextLabel</string>
+   </property>
+   <property name="alignment">
+    <set>Qt::AlignCenter</set>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_author">
+   <property name="geometry">
+    <rect>
+     <x>270</x>
+     <y>140</y>
+     <width>67</width>
+     <height>17</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>TextLabel</string>
+   </property>
+   <property name="alignment">
+    <set>Qt::AlignCenter</set>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_time">
+   <property name="geometry">
+    <rect>
+     <x>260</x>
+     <y>250</y>
+     <width>67</width>
+     <height>17</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>TextLabel</string>
+   </property>
+   <property name="alignment">
+    <set>Qt::AlignCenter</set>
+   </property>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
